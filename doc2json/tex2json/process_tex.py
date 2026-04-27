@@ -29,25 +29,7 @@ def process_tex_stream(
     :param grobid_config:
     :return:
     """
-    temp_input_dir = os.path.join(temp_dir, 'input')
-    temp_input_file = os.path.join(temp_input_dir, fname)
-
-    os.makedirs(temp_dir, exist_ok=True)
-    os.makedirs(temp_input_dir, exist_ok=True)
-
-    with open(temp_input_file, 'wb') as outf:
-        outf.write(stream)
-
-    output_file = process_tex_file(
-        temp_input_file, temp_dir=temp_dir, keep_flag=keep_flag, grobid_config=grobid_config
-    )
-
-    if os.path.exists(output_file):
-        with open(output_file, 'r') as f:
-            contents = json.load(f)
-            return contents
-    else:
-        return []
+    pass
 
 
 def process_tex_file(
@@ -68,35 +50,7 @@ def process_tex_file(
     :param grobid_config:
     :return:
     """
-    # create directories
-    os.makedirs(temp_dir, exist_ok=True)
-    os.makedirs(output_dir, exist_ok=True)
-    os.makedirs(log_dir, exist_ok=True)
-
-    # get paper id as the name of the file
-    paper_id = os.path.splitext(input_file)[0].split('/')[-1]
-    output_file = os.path.join(output_dir, f'{paper_id}.json')
-    cleanup_flag = not keep_flag
-
-    # check if input file exists and output file doesn't
-    if not os.path.exists(input_file):
-        raise FileNotFoundError(f"{input_file} doesn't exist")
-    if os.path.exists(output_file):
-        print(f'{output_file} already exists!')
-
-    # process LaTeX
-    xml_file = convert_latex_to_s2orc_json(input_file, temp_dir, cleanup_flag)
-    if not xml_file:
-        return None
-
-    # convert to S2ORC
-    paper = convert_latex_xml_to_s2orc_json(xml_file, log_dir, grobid_config=grobid_config)
-
-    # write to file
-    with open(output_file, 'w') as outf:
-        json.dump(paper.release_json("latex"), outf, indent=4, sort_keys=False)
-
-    return output_file
+    pass
 
 
 if __name__ == '__main__':

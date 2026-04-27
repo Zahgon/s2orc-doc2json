@@ -54,13 +54,7 @@ class ApiClient(object):
         Returns:
             HTTPRequest: The request object.
         """
-        if data is None:
-            return request
-
-        request.add_header('Content-Type', 'application/json')
-        request.data = json.dumps(data)
-
-        return request
+        pass
 
     @staticmethod
     def decode(response):
@@ -75,10 +69,7 @@ class ApiClient(object):
         Returns:
             dict or None.
         """
-        try:
-            return response.json()
-        except ValueError as e:
-            return e.message
+        pass
 
     def get_credentials(self):
         """ Returns parameters to be added to authenticate the request.
@@ -88,7 +79,7 @@ class ApiClient(object):
         Returns:
             dict: A dictionary containing the credentials.
         """
-        return {"username": self.username, "api_key": self.api_key}
+        pass
 
     def call_api(
             self,
@@ -116,24 +107,7 @@ class ApiClient(object):
         Returns:
             ResultParser or ErrorParser.
         """
-        headers = deepcopy(headers) or {}
-        headers['Accept'] = self.accept_type
-        params = deepcopy(params) or {}
-        data = data or {}
-        files = files or {}
-        #if self.username is not None and self.api_key is not None:
-        #    params.update(self.get_credentials())
-        r = requests.request(
-            method,
-            url,
-            headers=headers,
-            params=params,
-            files=files,
-            data=data,
-            timeout=timeout,
-        )
-
-        return r, r.status_code
+        pass
 
     def get(self, url, params=None, **kwargs):
         """ Call the API with a GET request.
@@ -145,12 +119,7 @@ class ApiClient(object):
         Returns:
             ResultParser or ErrorParser.
         """
-        return self.call_api(
-            "GET",
-            url,
-            params=params,
-            **kwargs
-        )
+        pass
 
     def delete(self, url, params=None, **kwargs):
         """ Call the API with a DELETE request.
@@ -162,12 +131,7 @@ class ApiClient(object):
         Returns:
             ResultParser or ErrorParser.
         """
-        return self.call_api(
-            "DELETE",
-            url,
-            params=params,
-            **kwargs
-        )
+        pass
 
     def put(self, url, params=None, data=None, files=None, **kwargs):
         """ Call the API with a PUT request.
@@ -181,14 +145,7 @@ class ApiClient(object):
         Returns:
             An instance of ResultParser or ErrorParser.
         """
-        return self.call_api(
-            "PUT",
-            url,
-            params=params,
-            data=data,
-            files=files,
-            **kwargs
-        )
+        pass
 
     def post(self, url, params=None, data=None, files=None, **kwargs):
         """ Call the API with a POST request.
@@ -202,14 +159,7 @@ class ApiClient(object):
         Returns:
             An instance of ResultParser or ErrorParser.
         """
-        return self.call_api(
-            method="POST",
-            url=url,
-            params=params,
-            data=data,
-            files=files,
-            **kwargs
-        )
+        pass
 
     def service_status(self, **kwargs):
         """ Call the API to get the status of the service.
@@ -217,9 +167,4 @@ class ApiClient(object):
         Returns:
             An instance of ResultParser or ErrorParser.
         """
-        return self.call_api(
-            'GET',
-            self.status_endpoint,
-            params={'format': 'json'},
-            **kwargs
-        )
+        pass

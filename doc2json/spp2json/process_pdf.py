@@ -17,33 +17,7 @@ def process_pdf_file(input_file: str, temp_dir: str, output_dir: str) -> str:
     :param output_dir:
     :return:
     """
-    # get paper id as the name of the file
-    paper_id = '.'.join(input_file.split('/')[-1].split('.')[:-1])
-    spp_json_file = os.path.join(temp_dir, f'{paper_id}.json')
-    output_file = os.path.join(output_dir, f'{paper_id}.json')
-
-    # check if input file exists and output file doesn't
-    if not os.path.exists(input_file):
-        raise FileNotFoundError(f"{input_file} doesn't exist")
-    if os.path.exists(output_file):
-        raise Warning(f'{output_file} already exists!')
-
-    # process PDF through SPP -> SPP JSON
-    client = SppClient()
-    # TODO: compute PDF hash
-    client.process(input_file, temp_dir)
-
-    # process SPP JSON -> S2ORC JSON
-    assert os.path.exists(spp_json_file)
-    with open(spp_json_file, 'r') as f_in:
-        spp_json = json.load(f_in)
-    paper = convert_spp_json_to_s2orc_json(spp_json=spp_json)
-
-    # write to file
-    with open(output_file, 'w') as outf:
-        json.dump(paper.release_json(), outf, indent=4, sort_keys=False)
-
-    return output_file
+    pass
 
 
 if __name__ == '__main__':

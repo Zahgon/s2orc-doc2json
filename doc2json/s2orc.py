@@ -78,24 +78,7 @@ class ReferenceEntry:
         self.fig_num = fig_num
 
     def as_json(self):
-        keep_keys = REFERENCE_OUTPUT_KEYS.get(self.type_str, None)
-        if keep_keys:
-            return {
-                k: self.__getattribute__(k) for k in keep_keys
-            }
-        else:
-            return {
-                "text": self.text,
-                "type": self.type_str,
-                "latex": self.latex,
-                "mathml": self.mathml,
-                "content": self.content,
-                "html": self.html,
-                "uris": self.uris,
-                "num": self.num,
-                "parent": self.parent,
-                "fig_num": self.fig_num
-            }
+        pass
 
 
 class BibliographyEntry:
@@ -161,21 +144,7 @@ class BibliographyEntry:
         self.links = links
 
     def as_json(self):
-        return {
-            "ref_id": self.ref_id,
-            "title": self.title,
-            "authors": self.authors,
-            "year": self.year,
-            "venue": self.venue,
-            "volume": self.volume,
-            "issue": self.issue,
-            "pages": self.pages,
-            "other_ids": self.other_ids,
-            "num": self.num,
-            "urls": self.urls,
-            "raw_text": self.raw_text,
-            "links": self.links
-        }
+        pass
 
 
 class Affiliation:
@@ -203,11 +172,7 @@ class Affiliation:
         self.location = location
 
     def as_json(self):
-        return {
-            "laboratory": self.laboratory,
-            "institution": self.institution,
-            "location": self.location
-        }
+        pass
 
 
 class Author:
@@ -250,14 +215,7 @@ class Author:
         self.email = email
 
     def as_json(self):
-        return {
-            "first": self.first,
-            "middle": self.middle,
-            "last": self.last,
-            "suffix": self.suffix,
-            "affiliation": self.affiliation.as_json() if self.affiliation else {},
-            "email": self.email
-        }
+        pass
 
 
 class Metadata:
@@ -303,13 +261,7 @@ class Metadata:
         self.identifiers = identifiers
 
     def as_json(self):
-        return {
-            "title": self.title,
-            "authors": [author.as_json() for author in self.authors],
-            "year": self.year,
-            "venue": self.venue,
-            "identifiers": self.identifiers
-        }
+        pass
 
 
 class Paragraph:
@@ -340,7 +292,7 @@ class Paragraph:
             {
                 "start": 53,
                 "end": 61,
-                "text": "α = 1",
+                "text": "Î± = 1",
                 "latex": "\\alpha = 1",
                 "ref_id": null
             }
@@ -374,14 +326,7 @@ class Paragraph:
         self.section = section_list
 
     def as_json(self):
-        return {
-            "text": self.text,
-            "cite_spans": self.cite_spans,
-            "ref_spans": self.ref_spans,
-            "eq_spans": self.eq_spans,
-            "section": '::'.join([sec[1] for sec in self.section]) if self.section else "",
-            "sec_num": self.section[-1][0] if self.section else None
-        }
+        pass
 
 
 class Paper:
@@ -419,16 +364,7 @@ class Paper:
         ]
 
     def as_json(self):
-        return {
-            "paper_id": self.paper_id,
-            "pdf_hash": self.pdf_hash,
-            "metadata": self.metadata.as_json(),
-            "abstract": [para.as_json() for para in self.abstract],
-            "body_text": [para.as_json() for para in self.body_text],
-            "back_matter": [para.as_json() for para in self.back_matter],
-            "bib_entries": {bib.bib_id: bib.as_json() for bib in self.bib_entries},
-            "ref_entries": {ref.ref_id: ref.as_json() for ref in self.ref_entries}
-        }
+        pass
 
     @property
     def raw_abstract_text(self) -> str:
@@ -436,7 +372,7 @@ class Paper:
         Get all the body text joined by a newline
         :return:
         """
-        return '\n'.join([para.text for para in self.abstract])
+        pass
 
     @property
     def raw_body_text(self) -> str:
@@ -444,33 +380,14 @@ class Paper:
         Get all the body text joined by a newline
         :return:
         """
-        return '\n'.join([para.text for para in self.body_text])
+        pass
 
     def release_json(self, doc_type: str="pdf"):
         """
         Return in release JSON format
         :return:
         """
-        # TODO: not fully implemented; metadata format is not right; extra keys in some places
-        release_dict = {"paper_id": self.paper_id}
-        release_dict.update({"header": {
-            "generated_with": f'{S2ORC_NAME_STRING} {S2ORC_VERSION_STRING}',
-            "date_generated": datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-        }})
-        release_dict.update(self.metadata.as_json())
-        release_dict.update({"abstract": self.raw_abstract_text})
-        release_dict.update({
-            f"{doc_type}_parse": {
-                "paper_id": self.paper_id,
-                "_pdf_hash": self.pdf_hash,
-                "abstract": [para.as_json() for para in self.abstract],
-                "body_text": [para.as_json() for para in self.body_text],
-                "back_matter": [para.as_json() for para in self.back_matter],
-                "bib_entries": {bib.bib_id: bib.as_json() for bib in self.bib_entries},
-                "ref_entries": {ref.ref_id: ref.as_json() for ref in self.ref_entries}
-            }
-        })
-        return release_dict
+        pass
 
 
 def load_s2orc(paper_dict: Dict) -> Paper:
@@ -479,52 +396,4 @@ def load_s2orc(paper_dict: Dict) -> Paper:
     :param paper_dict:
     :return:
     """
-    paper_id = paper_dict['paper_id']
-    pdf_hash = paper_dict.get('_pdf_hash', paper_dict.get('s2_pdf_hash', None))
-
-    # 2019 gorc parses
-    if "grobid_parse" in paper_dict and paper_dict.get("grobid_parse"):
-        metadata = {k: v for k, v in paper_dict["metadata"].items() if k in METADATA_KEYS}
-        abstract = paper_dict.get("grobid_parse").get("abstract", [])
-        body_text = paper_dict.get("grobid_parse").get("body_text", [])
-        back_matter = paper_dict.get("grobid_parse").get("back_matter", [])
-        bib_entries = paper_dict.get("grobid_parse").get("bib_entries", {})
-        for k, v in bib_entries.items():
-            if 'link' in v:
-                v['links'] = [v['link']]
-        ref_entries = paper_dict.get("grobid_parse").get("ref_entries", {})
-    # current and 2020 s2orc release_json
-    elif ("pdf_parse" in paper_dict and paper_dict.get("pdf_parse")) or ("body_text" in paper_dict and paper_dict.get("body_text")):
-        if "pdf_parse" in paper_dict:
-            paper_dict = paper_dict["pdf_parse"]
-        if paper_dict.get("metadata"):
-            metadata = {k: v for k, v in paper_dict.get("metadata").items() if k in METADATA_KEYS}
-        # 2020 s2orc releases (metadata is separate)
-        else:
-            metadata = {
-                "title": None,
-                "authors": [],
-                "year": None
-            }
-        abstract = paper_dict.get("abstract", [])
-        body_text = paper_dict.get("body_text", [])
-        back_matter = paper_dict.get("back_matter", [])
-        bib_entries = paper_dict.get("bib_entries", {})
-        for k, v in bib_entries.items():
-            if 'link' in v:
-                v['links'] = [v['link']]
-        ref_entries = paper_dict.get("ref_entries", {})
-    else:
-        print(paper_id)
-        raise NotImplementedError("Unknown S2ORC file type!")
-
-    return Paper(
-        paper_id=paper_id,
-        pdf_hash=pdf_hash,
-        metadata=metadata,
-        abstract=abstract,
-        body_text=body_text,
-        back_matter=back_matter,
-        bib_entries=bib_entries,
-        ref_entries=ref_entries
-    )
+    pass
